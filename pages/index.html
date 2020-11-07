@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cross-Tab Communication with JavaScript</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@tailwindcss/typography@0.2.x/dist/typography.min.css"
+    />
+  </head>
+  <body class="prose lg:prose-lg mx-auto mt-8">
+    <nav class="flex space-x-6 mb-6">
+      <a href="/" class="font-bold">Home</a>
+      <a href="/localstorage">LocalStorage</a>
+      <a href="/sharedworker">SharedWorker</a>
+      <a href="/broadcastchannel">BroadcastChannel</a>
+    </nav>
+
+    <h1>How To Do Cross-Tab Communication With JavaScript</h1>
+
+    <p>There's a couple different ways we can go about this.</p>
+
+    <ol>
+      <li>
+        <div class="flex space-x-6 -mb-6">
+          <a href="/localstorage"> LocalStorage </a>
+          <span>|</span>
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+            target="_blank"
+            >MDN</a
+          >
+        </div>
+        <p>
+          First, we'll be going over cross-tab communication with LocalStorage. This
+          method is best if you need to support older browsers, it has support back to
+          IE8. It's also the only method that has decent mobile browser support.
+        </p>
+      </li>
+      <li>
+        <div class="flex space-x-6 -mb-6">
+          <a href="/sharedworker"> SharedWorker </a>
+          <span>|</span>
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker"
+            target="_blank"
+            >MDN</a
+          >
+        </div>
+        <p>
+          Second, we'll cover using a SharedWorker. This method is similar to using a
+          WebWorker, except the worker is sharable across browser contexts (windows, tabs,
+          frames). Using this approach is great if you're doing some heavy lifting because
+          all the worker's code will be run in the background by the browser. Meaning,
+          it's not running on the same thread as our application.
+        </p>
+      </li>
+      <li>
+        <div class="flex space-x-6 -mb-6">
+          <a href="/broadcastchannel"> BroadcastChannel </a>
+          <span>|</span>
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel"
+            target="_blank"
+            >MDN</a
+          >
+        </div>
+        <p>
+          Last, we'll cover using a BroadcastChannel. This is a native browser API to
+          achieve exactly what we want. The down side is there's no Safari support.
+        </p>
+      </li>
+    </ol>
+  </body>
+</html>
