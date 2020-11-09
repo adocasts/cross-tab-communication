@@ -178,7 +178,7 @@
 
       function getParsedStorageItem(storageKey) {
         let stringValue = localStorage.getItem(storageKey);
-        return stringValue ? JSON.parse(stringValue) : defaultValue;
+        return stringValue ? JSON.parse(stringValue) : stringValue;
       }
 
       function getSenderId() {
