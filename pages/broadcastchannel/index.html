@@ -59,6 +59,54 @@
     <p id="messagesPlaceholder">No messages</p>
     <ol id="messages" class="list-none grid"></ol>
 
-    <script></script>
+    <script>
+      const messagesEl = document.getElementById('messages');
+      const messagesPlaceholderEl = document.getElementById('messagesPlaceholder');
+      const messagesKey = 'messages';
+      const senderIdKey = 'senderId';
+      const tabSenderId = getSenderId();
+
+      /* FUNCTIONALITY CODE */
+
+      /* UTILITIES */
+
+      function hideEl(el) {
+        el.classList.add('hidden');
+      }
+
+      function showEl(el) {
+        el.classList.remove('hidden');
+      }
+
+      function parseArray(item) {
+        if (!item || !item.length) return [];
+        return !Array.isArray(item) ? JSON.parse(item) : item;
+      }
+
+      function getArrayDifference(primary, secondary, key) {
+        return key
+          ? primary.filter((x) => !secondary.find((y) => x[key] === y[key]))
+          : primary.filter((item) => !secondary.includes(item));
+      }
+
+      function setStringifiedStorageItem(key, value) {
+        localStorage.setItem(key, value ? JSON.stringify(value) : value);
+      }
+
+      function getParsedStorageItem(storageKey) {
+        let stringValue = localStorage.getItem(storageKey);
+        return stringValue ? JSON.parse(stringValue) : defaultValue;
+      }
+
+      function getSenderId() {
+        let senderId = sessionStorage.getItem(senderIdKey) || getUniqueId();
+        sessionStorage.setItem(senderIdKey, senderId);
+        return senderId;
+      }
+
+      function getUniqueId() {
+        return '_' + Math.random().toString(36).substr(2, 9);
+      }
+    </script>
   </body>
 </html>
