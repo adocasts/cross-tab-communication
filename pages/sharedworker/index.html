@@ -32,8 +32,6 @@
 
     <h1>SharedWorker Cross-Tab Communication</h1>
 
-    <div class="bg-gray-800 text-white p-3 rounded mb-6">Not Yet Completed</div>
-
     <form id="sendMessageForm">
       <label class="block font-bold">Add A Message</label>
       <div class="flex flex-wrap md:flex-no-wrap">
@@ -65,8 +63,113 @@
       const messagesKey = 'messages';
       const senderIdKey = 'senderId';
       const tabSenderId = getSenderId();
+      const mutations = {
+        ADD: 'ADD',
+        SET: 'SET'
+      };
 
       /* FUNCTIONALITY CODE */
+
+      const worker = new SharedWorker('scripts/sharedworker.js');
+      worker.port.onmessage = handleNewMessage;
+
+      loadMessages();
+
+      document.forms.sendMessageForm.addEventListener('submit', handleSendMessage);
+      document.forms.clearMessagesForm.addEventListener('submit', handleClearMessages);
+
+      function handleSendMessage(event) {
+        event.preventDefault();
+
+        const value = event.target.message.value;
+        const message = makeMessage(value);
+
+        postMessage(mutations.ADD, message);
+
+        event.target.reset();
+        event.target.message.focus();
+      }
+
+      function handleClearMessages(event) {
+        if (event) event.preventDefault();
+        
+        postMessage(mutations.SET, []);
+      }
+
+      function handleNewMessage({ data }) {
+        const { mutation, value, messages } = data;
+
+        setStringifiedStorageItem(messagesKey, messages);
+
+        messages.length
+          ? hideEl(messagesPlaceholderEl)
+          : showEl(messagesPlaceholderEl);
+
+        switch(mutation) {
+          case mutations.ADD:
+            displayMessages(value);
+            break;
+          case mutations.SET:
+            messagesEl.innerHTML = '';
+            displayMessages(value);
+            break;
+        }
+      }
+
+      function addMessage(message) {
+        let messages = getMessages();
+        messages.push(message);
+        return messages;
+      }
+
+      function makeMessage(message) {
+        return {
+          id: getUniqueId(),
+          senderId: tabSenderId,
+          message,
+        };
+      }
+
+      function makeMessageEl({ message, id, senderId }) {
+        const li = document.createElement('li');
+        const baseClassName = 'px-3 py-1 rounded';
+
+        li.id = id;
+        li.textContent = message;
+        li.className =
+          senderId == tabSenderId
+            ? `${baseClassName} bg-blue-600 text-white place-self-end`
+            : `${baseClassName} bg-gray-700 text-white place-self-start`;
+
+        return li;
+      }
+
+      function loadMessages() {
+        const messages = getMessages();
+
+        postMessage(mutations.SET, messages);
+
+        if (messages.length) {
+          hideEl(messagesPlaceholderEl);
+        }
+
+        displayMessages(messages);
+      }
+
+      function displayMessages(messages = []) {
+        messages.forEach((msg) => messagesEl.appendChild(makeMessageEl(msg)));
+      }
+
+      function getMessages() {
+        const messages = getParsedStorageItem(messagesKey);
+        return !Array.isArray(messages) ? [] : messages;
+      }
+
+      function postMessage(mutation, value) {
+        worker.port.postMessage({ mutation, value });
+      }
+
+
 
       /* UTILITIES */
 
@@ -83,19 +186,13 @@
         return !Array.isArray(item) ? JSON.parse(item) : item;
       }
 
-      function getArrayDifference(primary, secondary, key) {
-        return key
-          ? primary.filter((x) => !secondary.find((y) => x[key] === y[key]))
-          : primary.filter((item) => !secondary.includes(item));
-      }
-
       function setStringifiedStorageItem(key, value) {
         localStorage.setItem(key, value ? JSON.stringify(value) : value);
       }
 
       function getParsedStorageItem(storageKey) {
         let stringValue = localStorage.getItem(storageKey);
-        return stringValue ? JSON.parse(stringValue) : defaultValue;
+        return stringValue ? JSON.parse(stringValue) : stringValue;
       }
 
       function getSenderId() {
