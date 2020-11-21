@@ -4,7 +4,7 @@ The following repository will be used in the Jagr 3-part series covering differe
 
 ## Lesson 1 - LocalStorage
 
-**Status:** Completed | [View on YouTube](https://www.youtube.com/watch?v=zvYDJe52aCw) | [View on Jagr](https://jagr.co/posts/how-to-do-cross-tab-communication-in-javascript-with-localstorage) [MDN Doc](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)
+**Status:** Completed | [View on YouTube](https://www.youtube.com/watch?v=zvYDJe52aCw) | [View on Jagr](https://jagr.co/posts/how-to-do-cross-tab-communication-in-javascript-with-localstorage) | [MDN Doc](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)
 
 First, we'll be going over cross-tab communication with LocalStorage.
 This method is best if you need to support older browsers, it has support back to IE8.
