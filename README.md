@@ -12,7 +12,7 @@ It's also the only method that has decent mobile browser support.
 
 ## Lesson 2 - SharedWorker
 
-**Status:** In-Progress | [MDN Doc](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker)
+**Status:** Completed | [View on YouTube](https://www.youtube.com/watch?v=fP6b1wLy8B8&list=PL9dIWiKCV570vHHu_IocCHLXlUgUYm_id&index=2) | [View on Jagr](https://jagr.co/posts/cross-tab-communication-in-javascript-using-a-sharedworker) | [MDN Doc](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker)
 
 Second, we'll cover using a SharedWorker.
 This method is similar to using a WebWorker, except the worker is sharable across browser contexts (windows, tabs, frames).
@@ -21,7 +21,7 @@ Meaning, it's not running on the same thread as our application.
 
 ## Lesson 3 - BroadcastChannel
 
-**Status:** NA | [MDN Doc](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel)
+**Status:** In-Progress | [MDN Doc](https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel)
 
 Last, we'll cover using a BroadcastChannel. This is a native browser API to achieve exactly what we want.
 The down side is there's no Safari support.

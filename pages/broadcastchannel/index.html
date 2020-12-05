@@ -65,8 +65,108 @@
       const messagesKey = 'messages';
       const senderIdKey = 'senderId';
       const tabSenderId = getSenderId();
+      const mutations = {
+        ADD: 'ADD',
+        SET: 'SET'
+      };
+
+      let allMessages = [];
 
       /* FUNCTIONALITY CODE */
+
+      const broadcast = new BroadcastChannel('message_broadcast');
+      broadcast.onmessage = handleNewMessage;
+
+      loadMessages();
+
+      document.forms.sendMessageForm.addEventListener('submit', handleSendMessage);
+      document.forms.clearMessagesForm.addEventListener('submit', handleClearMessages);
+
+      function handleSendMessage(event) {
+        event.preventDefault();
+
+        const value = event.target.message.value;
+        const message = makeMessage(value);
+        allMessages.push(message);
+
+        postMessage(mutations.ADD, [message]);
+
+        event.target.reset();
+        event.target.message.focus();
+      }
+
+      function handleClearMessages(event) {
+        if (event) event.preventDefault();
+        
+        allMessages = [];
+        postMessage(mutations.SET, allMessages);
+      }
+
+      function handleNewMessage({ data }) {
+        const { mutation, value, messages } = data;
+
+        allMessages = messages;
+
+        messages.length
+          ? hideEl(messagesPlaceholderEl)
+          : showEl(messagesPlaceholderEl);
+
+        switch(mutation) {
+          case mutations.ADD:
+            displayMessages(value);
+            break;
+          case mutations.SET:
+            messagesEl.innerHTML = '';
+            displayMessages(value);
+            break;
+        }
+      }
+
+      function makeMessage(message) {
+        return {
+          id: getUniqueId(),
+          senderId: tabSenderId,
+          message,
+        };
+      }
+
+      function makeMessageEl({ message, id, senderId }) {
+        const li = document.createElement('li');
+        const baseClassName = 'px-3 py-1 rounded';
+
+        li.id = id;
+        li.textContent = message;
+        li.className =
+          senderId == tabSenderId
+            ? `${baseClassName} bg-blue-600 text-white place-self-end`
+            : `${baseClassName} bg-gray-700 text-white place-self-start`;
+
+        return li;
+      }
+
+      function loadMessages() {
+        allMessages = getMessages();
+        
+        postMessage(mutations.SET, allMessages);
+      }
+
+      function displayMessages(messages = []) {
+        messages.forEach((msg) => messagesEl.appendChild(makeMessageEl(msg)));
+      }
+
+      function getMessages() {
+        const messages = getParsedStorageItem(messagesKey);
+        return !Array.isArray(messages) ? [] : messages;
+      }
+
+      function postMessage(mutation, value) {
+        const data = { mutation, value, messages: allMessages };
+        handleNewMessage({ data });
+        setStringifiedStorageItem(messagesKey, allMessages);
+        broadcast.postMessage(data);
+      }
+
+
 
       /* UTILITIES */
 
@@ -83,19 +183,14 @@
         return !Array.isArray(item) ? JSON.parse(item) : item;
       }
 
-      function getArrayDifference(primary, secondary, key) {
-        return key
-          ? primary.filter((x) => !secondary.find((y) => x[key] === y[key]))
-          : primary.filter((item) => !secondary.includes(item));
-      }
-
       function setStringifiedStorageItem(key, value) {
         localStorage.setItem(key, value ? JSON.stringify(value) : value);
       }
 
       function getParsedStorageItem(storageKey) {
         let stringValue = localStorage.getItem(storageKey);
-        return stringValue ? JSON.parse(stringValue) : defaultValue;
+        console.log({ stringValue })
+        return stringValue ? JSON.parse(stringValue) : stringValue;
       }
 
       function getSenderId() {
